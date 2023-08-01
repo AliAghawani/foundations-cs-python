@@ -57,6 +57,12 @@ def display_all_tickets(tickets):
 def get_priority(ticket):
     # Function to get the priority for sorting today's events
     return int(ticket[4])
+def write_tickets_to_file(file_name, tickets):
+    # Function to write tickets to a text file
+    file = open(file_name, "w")
+    for ticket in tickets:
+        file.write(", ".join(ticket) + "\n")
+    file.close()
 def run_events(tickets):
     # Function to display today's events, sorted by priority, and remove them from the list
     today = get_current_date() #as we mentioned before
@@ -83,3 +89,124 @@ def disable_ticket(tickets, ticket_id): # tickets (the list of all tickets) and 
 #disable_ticket() function disables a ticket by removing it from the tickets list if it exists. 
 # It provides user feedback on whether the ticket was successfully disabled or if the ticket with the specified ticket_id was not found. 
 # However, it's important to be cautious when modifying a list while iterating over it, as it can lead to unexpected issues.
+def change_ticket_priority(tickets, ticket_id, new_priority):
+    # Function to change the priority of a ticket
+    ticket_found = False    #The function starts by initializing a boolean variable ticket_found to False. This variable will be used to track whether the ticket with the provided ticket_id is found in the list or not.
+    for ticket in tickets:
+        if ticket[0] == ticket_id: #or each ticket in the tickets list, it checks if the ticket's ID (index 0 of the ticket list) matches the given ticket_id.
+            ticket[4] = new_priority #If the ticket's ID matches the given ticket_id, it means the ticket has been found. The function updates the priority of the ticket (index 4 of the ticket list) with the new value new_priority.
+            ticket_found = True
+            break
+    if ticket_found:
+        print(f"Ticket {ticket_id} priority has been changed to  {new_priority}.")
+    else:
+        print(f"Ticket {ticket_id} not found.")
+        #change_ticket_priority() function changes the priority of a ticket with the provided ticket_id in the tickets list. 
+        # If the ticket is found and its priority is updated, it provides user feedback confirming the successful update. 
+        # If the ticket with the specified ticket_id is not found in the list, it provides a message indicating that the ticket was not found.
+
+def main(): #main() function acts as the core of the program and controls user interactions.
+    #the program begin
+    print("Start of the program")
+    # Main function to handle the user interaction component of the system
+    file_name = "tickets.txt" #a variable file_name and assigning it the value "tickets.txt", This variable holds the name of the text file from which the ticket information will be read.
+    tickets = read(file_name) #read() function passing file_name as an argument The read() function used to read the ticket information from the  file and return a list of tickets.
+
+    print("The Corrupted Ticketing System")
+    user_type = input("Are you a normal user or admin: ").lower()
+
+    if user_type == "admin":
+        admin_attempts = 0
+        max_admin_attempts = 5
+        admin_username = "admin"
+        admin_password = "Ali23456"
+ #the program begin by asking the user 
+        while admin_attempts < max_admin_attempts:
+            username = input("Enter your username: ")
+            password = input("Enter your password: ")
+   #f the user is an "admin", the function initiates an admin login process where the admin has up to 5 login attempts.
+   #  If the correct admin username ("admin") and password ("Ali23456") are entered, the admin menu is displayed,
+   #  and the admin can perform various actions related to the ticketing system 
+   # (e.g., display statistics, book a ticket, change ticket priority, disable ticket, run events, and exit the program).
+            if username == admin_username and password == admin_password:
+                print("Login successful. Welcome Admin!")
+                while True:
+                    print("\nAdmin Menu:")
+                    print("1. Display Statistics")
+                    print("2. Book a Ticket")
+                    print("3. Display all Tickets")
+                    print("4. Change Ticket’s Priority")
+                    print("5. Disable Ticket")
+                    print("6. Run Events")
+                    print("7. Exit")
+
+                    choice = int(input("Enter your choice: "))
+
+                    if choice == 1:
+                        display_statistics(tickets)
+                    elif choice == 2:
+                        ticket_id = "tick" + str(len(tickets) + 101)
+                        event_id = input("Enter Event ID: ")
+                        username = input("Enter Username: ")
+                        timestamp = input("Enter Timestamp (YYYYMMDD): ")
+                        priority = input("Enter Priority: ")
+                        book_ticket(tickets, ticket_id, event_id, username, timestamp, priority)
+                    elif choice == 3:
+                        display_all_tickets(tickets)
+                    elif choice == 4:
+                        ticket_id = input("Enter Ticket ID: ")
+                        new_priority = input("Enter New Priority: ")
+                        change_ticket_priority(tickets, ticket_id, new_priority)
+                    elif choice == 5:
+                        ticket_id = input("Enter Ticket ID: ")
+                        disable_ticket(tickets, ticket_id)
+                    elif choice == 6:
+                        run_events(tickets)
+                    elif choice == 7:
+                        print("Exiting the program...")
+                        write_tickets_to_file(file_name, tickets)
+                        break
+                    else:
+                        print("Invalid choice. Please try again.")
+            else:
+                admin_attempts += 1
+                remaining_attempts = max_admin_attempts - admin_attempts
+                print(f"Incorrect Username and/or Password. Remaining attempts: {remaining_attempts}")
+        else:
+            print("Maximum login attempts exceeded. Exiting the program.")
+    elif user_type == "user":
+     #   If the user is a "normal user", the function displays the normal user menu.
+     #  The normal user can book a ticket, and the program will continue looping until the user chooses to exit the program.
+        print("Welcome Normal User!")
+        while True:
+            print("\nNormal User Menu:")
+            print("1. Book a Ticket")
+            print("2. Exit")
+
+            choice = int(input("Enter your choice: "))
+
+            if choice == 1:
+                ticket_id = "tick" + str(len(tickets) + 101)
+                event_id = input("Enter Event ID: ")
+                username = input("Enter Username: ")
+                timestamp = input("Enter Timestamp (YYYYMMDD): ")
+                priority = 0
+                book_ticket(tickets, ticket_id, event_id, username, timestamp, priority)
+            elif choice == 2:
+                print("Saving any newly added tickets and exiting the program...")
+                write_tickets_to_file(file_name, tickets)
+                break
+            else:
+                print("Invalid choice. Please try again.")
+    else:
+        print("Invalid user type. Exiting the program.")
+
+
+if __name__ == "__main__":
+    main()
+
+print("Ali Aghawani [FCS-45]")
+#sources I used to write this code : 
+#stackOverflow
+#W3schools
+#Some Youtube Videos (file handling and some built in functions )
