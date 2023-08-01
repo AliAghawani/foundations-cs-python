@@ -1,4 +1,5 @@
 #<Ali Aghawani> <FCS 45> <Midterm>
+import datetime #we use it to use the for time , for get_current_date function (datetime.date.today)
 # Function to read tickets from a text file and return a list of tickets 
 def read(fileName): 
     tickets = [] 
@@ -29,4 +30,56 @@ def display_statistics(x): #x here is the tickets
 #display_statistics() function calculates the count of tickets for each event ID,
 #  identifies the event ID with the highest count, and displays the result to the user.
 #  This provides insights into the most popular event based on the number of tickets issued.
-
+def book_ticket(tickets, ticket_id, event_id, username, timestamp, priority): #The function here take 6 parameters 
+    # Function to book a new ticket and add it to the list of tickets
+    tickets.append([ticket_id, event_id, username, timestamp, priority])  #The function starts by creating a new list that represents the details of the new ticket to be booked. The details are stored as elements in the list in the following order: ticket_id, event_id, username, timestamp, and priority. This new list is created as [ticket_id, event_id, username, timestamp, priority].
+    print("Thank you")
+    print(f"Ticket {ticket_id} has been booked")
+#book_ticket() function is used to book a new ticket and add it to the list of existing tickets. 
+# It receives the necessary information about the new ticket (ticket ID, event ID, username, timestamp, and priority) as arguments and appends this information as a new list to the tickets list. 
+# The function provides user feedback by printing a message confirming the successful booking of the new ticket.
+def get_current_date():
+    # Returns the current date in the format 'YYYY-MM-DD'
+    return datetime.date.today().isoformat() #form stackoverflow I know it 
+def get_sort_key(ticket):
+    # Function to get the sort key for displaying all tickets
+    return (ticket[3], ticket[1])
+def display_all_tickets(tickets):
+    # Function to display all tickets ordered by event's date and event ID
+    today = get_current_date() #the current date as we mentioned before 
+    sorted_tickets = sorted(tickets, key=get_sort_key)
+    for ticket in sorted_tickets:
+        if ticket[3] >= today:  #For each ticket, it checks if the event date (index 3 of the ticket list) is greater than or equal to the today date.
+            print(", ".join(ticket))
+#display_all_tickets() function displays all the tickets in the tickets list ordered by their event dates and event IDs.
+#  It filters out tickets whose event dates are in the past, ensuring that only tickets for today and future events are displayed. 
+# This provides an organized and up-to-date list of tickets for the users to view.
+def get_priority(ticket):
+    # Function to get the priority for sorting today's events
+    return int(ticket[4])
+def run_events(tickets):
+    # Function to display today's events, sorted by priority, and remove them from the list
+    today = get_current_date() #as we mentioned before
+    today_events = [] # today_events to store tickets that have today's date as their event date.
+    for ticket in tickets: #It iterates over each ticket in the tickets list and checks if the event date matches the today date.
+        if ticket[3] == today: #check if yes equal to today
+            today_events.append(ticket) #If the ticket's event date is today, it is added to the today_events list.
+        if not today_events: 
+            print("No events today.")   #After processing all tickets, it checks if there are any events for today in the today_events list. If there are no events for today, it prints "No events today."
+        return today_events.sort(key=get_priority) #The today_events list is sorted by ticket priority using the sort() method and a custom key function get_priority.
+    for ticket in today_events:
+        print(", ".join(ticket)) #or each ticket in today_events, it prints the ticket information to the console using ", ".join(ticket).
+        tickets.remove(ticket) #The remove() method is used to remove the today's events from the original tickets list, ensuring they won't be displayed again in subsequent runs of the program.
+#run_events() function displays today's events sorted by priority and then removes these events from the original tickets list.
+#  If no events are found for today, it prints a message indicating that there are no events for today.
+#  The function provides an organized way to display today's events and manage the list of tickets by removing the events that have already occurred
+def disable_ticket(tickets, ticket_id): # tickets (the list of all tickets) and ticket_id (the ID of the ticket to be disabled).
+    # Function to disable a ticket
+    for ticket in tickets:
+        if ticket[0] == ticket_id:   
+            tickets.remove(ticket) #If a ticket with the specified ticket_id is found (ticket[0] == ticket_id), it is removed from the tickets list using the remove() method.
+            print(f"Ticket {ticket_id} has been disabled and not considered anymore.")
+            return print(f"Ticket {ticket_id} not found.")
+#disable_ticket() function disables a ticket by removing it from the tickets list if it exists. 
+# It provides user feedback on whether the ticket was successfully disabled or if the ticket with the specified ticket_id was not found. 
+# However, it's important to be cautious when modifying a list while iterating over it, as it can lead to unexpected issues.
